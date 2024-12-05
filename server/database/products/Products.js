@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize");
 const db = require("../Seq")
 
 
+
 const Products = db.define(
   'products',
   {

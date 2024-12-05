@@ -38,6 +38,11 @@ const useStore = create((set) => ({
 
 
      
+     stocks_from_db : [],
+     
+     
+     setStocks: (data) => set((state) => ({ stocks_from_db : [...data] })),
+     
 }))
 
 export default useStore;

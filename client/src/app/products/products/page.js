@@ -1,10 +1,90 @@
 "use client"
 import useStore from '@/app/store/store'
-import Product from '@/app/snippets/newproduct/newproduct'
+import Product from '@/app/snippets/newitem/newitem'
+import Edit from '@/app/snippets/edititem/edititem';
+import { useEffect,useState } from 'react'
+import Image from 'next/image'
+import axiosInterceptor from "@/app/utils/interceptor"
+import toast, { Toaster } from 'react-hot-toast'
+
+import edit from "../../../../public/edit.svg"
+import up from "../../../../public/delete.svg"
 
 function Products() {
-  const {new_product_toggle,setProductToggle} = useStore((state) => state)
+  const [toggle,setToggle] = useState(false)
 
+
+  const [edittoggle,setEditToggle] = useState({tog : false, id : 0})
+  const {new_product_toggle,setProductToggle,stocks_from_db, setStocks} = useStore((state) => state)
+  
+  useEffect(()=>{
+
+
+
+    
+
+
+
+    (async () => {
+      
+    
+
+      
+
+      try{
+    const category_res = await axiosInterceptor.get(`${process.env.NEXT_PUBLIC_BASE}/getallstocks`)
+     
+   
+
+    
+
+ 
+    
+    
+    console.log(category_res.data,'hi')
+    setStocks(category_res.data) 
+
+    
+  }
+      
+      
+      
+    
+      
+      
+     
+  
+  
+
+
+  
+      catch(err){
+        console.log(err)
+      } 
+    })()
+  },[new_product_toggle,toggle])
+
+  
+  async function handleProductDelete(id){
+    try{
+      console.log(id,'id')
+      const delete_stock = await axiosInterceptor.post(`${process.env.NEXT_PUBLIC_BASE}/deletestock`, {id})
+
+      console.log(delete_stock)
+      toast.success("Product Deleted Successfully")
+      
+      
+      setToggle(!toggle)
+    }
+    catch(err){
+      console.log(err)
+      
+      
+    
+    
+      toast.error(err.response.data.data) 
+    }
+  }
   return (
     <div>
       
@@ -34,31 +114,24 @@ function Products() {
     </thead>
     <tbody>
       {/* row 1 */}
-      <tr>
-        <th>1</th>
-        <td>Cy Ganderton</td>
-        <td>Quality Control Specialist</td>
-        <td>Blue</td>
-        <td>Active</td>
+      
+      {stocks_from_db.map((item, index) => (
+        <tr key = {index}>
+        <th></th>
+        <td>{item.name}</td>
+        <td>{item.selling_price}</td>
+        <td>{item.status}</td>
+        
+        <td className='flex cursor-pointer'><Image src = {edit} alt = "edit" width = {30} height = {30} onClick = {()=>setEditToggle({tog : true, id : item._id})}/>
+        <Image src = {up} alt = "delete" width = {20} height = {20} onClick={()=>handleProductDelete(item._id)} />
+        
+        
+       
+        </td>
       </tr>
-      {/* row 2 */}
-      <tr>
-        <th>2</th>
-        <td>Hart Hagerty</td>
-        <td>Desktop Support Technician</td>
-        <td>Purple</td>
-        <td>Active</td>
-
-      </tr>
-      {/* row 3 */}
-      <tr>
-        <th>3</th>
-        <td>Brice Swyre</td>
-        <td>Tax Accountant</td>
-        <td>Red</td>
-        <td>Active</td>
-
-      </tr>
+      ))}
+      
+     
     </tbody>
   </table>
 
@@ -70,7 +143,7 @@ function Products() {
 </div>
 </div>
 
-
+<Toaster/>
 
 
        
@@ -78,6 +151,7 @@ function Products() {
        
 
 {new_product_toggle && <div className = "absolute top-0  w-[80vw] h-[100vh]  max-h-[100vh] opacity-[95] pt-7  z-10 flex justify-center  overflow-hidden bg-white"> <Product/> </div> }
+{edittoggle.tog && <div className = "absolute top-0  w-[80vw] h-[100vh]  max-h-[100vh] opacity-[95] pt-7  z-10 flex justify-center  overflow-hidden bg-white"> <Edit edittoggle = {edittoggle} setEditToggle = {setEditToggle}/> </div> }
       </div>
     </div>
   )

@@ -30,7 +30,7 @@ function Category() {
       
 
       try{
-    const category_res = await axiosInterceptor.get(`${process.env.NEXT_PUBLIC_BASE}/getallcategories`)
+    const category_res = await axiosInterceptor.get(`${process.env.NEXT_PUBLIC_BASE}/allcategories`)
      
    
 
@@ -39,8 +39,8 @@ function Category() {
  
     
     
-    console.log(category_res.data.categories[0],'hi')
-    setCategory(category_res.data.categories[0]) 
+    console.log(category_res.data,'hi')
+    setCategory(category_res.data) 
 
     
   }
@@ -92,9 +92,9 @@ function Category() {
         return(
       
       <tr key = {index}>
-        <th>{i.id}</th>
+        <th>{index+1}</th>
         <td>{i.category_name}</td>
-        <td><img src = {i.category_photo} alt = "category" className = "w-10 h-10" /></td>
+        <td><img src = {`http://localhost:5000/img/${i.filename}`} alt = "category" className = "w-10 h-10" /></td>
         
       </tr>
     )  })}

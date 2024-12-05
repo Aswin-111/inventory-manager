@@ -1,28 +1,17 @@
 const express = require('express');
 const router = express.Router();
-
-// Import your controllers
-
+const { productUpload, categoryUpload } = require('../middleware/multer');
 const productsController = require('../controllers/Products');
 const categoryController = require('../controllers/Category');
-const inventoryController = require('../controllers/Inventory');
 
-// Define your routes
-// products routes
+// Products routes
 router.get('/getallproducts', productsController.getAllProducts);
-router.post('/createproduct', productsController.createProduct);
+router.post('/createproduct', productUpload.single('productimage'), productsController.createProduct);
+router.put('/products/:id', productUpload.single('productimage'), productsController.updateProduct);
+router.delete('/products/:id', productsController.deleteProduct);
 
-
-// category routes
+// Category routes
 router.get('/getallcategories', categoryController.getAllCategory);
-router.post('/createcategory', categoryController.createCategory);
-
-
-
-
-
-// inventory routes
-
-
+router.post('/createcategory', categoryUpload.single('category_photo'), categoryController.createCategory);
 
 module.exports = router;

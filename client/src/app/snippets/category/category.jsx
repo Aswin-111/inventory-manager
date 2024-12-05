@@ -7,42 +7,84 @@ import axiosInterceptor from "@/app/utils/interceptor"
 import closebtn from '../../../../public/closebtn.png'
 import Image from "next/image"
 import { useRef, useState } from "react"
-import toast from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast"
 function CategoryPopup() {
   const { new_category_toggle, setCategoryToggle } = useStore((state) => state)
   const productRef = useRef("")
   const [image, setImage] = useState(null);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImage(reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     setImage(reader.result);
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
 
-  const handleSubmit = () => {
-    const productName = productRef.current.value;
 
-    const formData = {
-      image: image,
-      productName: productName
-    };
+  // const handleSubmit = () => {
+  //   const productName = productRef.current.value;
 
-    axiosInterceptor.post(`${process.env.NEXT_PUBLIC_BASE}/createcategory`, {img:formData,name:productName})
-      .then((res) => {
+  //   const formData = {
+  //     image: image,
+  //     productName: productName
+  //   };
+
+  //   axiosInterceptor.post(`${process.env.NEXT_PUBLIC_BASE}/createcategory`, {img:formData,name:productName})
+  //     .then((res) => {
         
-        console.log(res.data)
-        setCategoryToggle(false)
-        toast("Category Created Successfully")
-      }
-      )
-      .catch((err) => console.error(err));
+  //       console.log(res.data)
+  //       setCategoryToggle(false)
+  //       toast("Category Created Successfully")
+  //     }
+  //     )
+  //     .catch((err) => console.error(err));
+  // };
+  const [file, setFile] = useState(null);
+  const [uploadMessage, setUploadMessage] = useState("");
+
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
   };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!file) {
+      setUploadMessage("Please select a file to upload.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+formData.append('stock', productRef.current.value);
+
+
+// formData.append('category', JSON.stringify(categoryData))
+    // Note: 'file' should match the field name in multer
+
+    try {
+      const response = await axiosInterceptor.post("http://localhost:5000/createcategory", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setUploadMessage(response.data); // Display success message
+      setCategoryToggle(false)
+      toast.success("Category Created Successfully")
+    } catch (error) {
+      console.error("Error uploading the file:", error.response.data.data);
+      // setUploadMessage("Error uploading the file.");
+
+      toast.error(error.response.data.data)
+    }
+  };
+ 
 
   return (
-    <div className="relative flex flex-col justify-center w-[27rem] h-[40vh] max-h-[100%] rounded-xl gap-y-[1rem] overflow-scroll border-2 border-black">
+    <form onSubmit={handleSubmit} className="relative flex flex-col justify-center w-[27rem] h-[40vh] max-h-[100%] rounded-xl gap-y-[1rem] overflow-hidden border-2 border-black">
       <div className="absolute top-2 right-4">
         <Image
           src={closebtn}
@@ -60,11 +102,14 @@ function CategoryPopup() {
           </div>
           <input type="file" accept="image/*" className="file-input file-input-bordered w-full max-w-xs" onChange={handleFileChange} />
         </label>
+
+        
       </div>
       <div className="flex justify-center mt-5">
         <input id="file-input" type="button" value="Submit" className="input input-bordered w-full max-w-xs rounded-xl bg-[#4287f5] text-white" onClick={handleSubmit} />
       </div>
-    </div>
+      <div><Toaster/></div>
+    </form>
   )
 }
 

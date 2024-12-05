@@ -5,4 +5,4 @@ const db = new Sequelize('dorakart', 'root', 'pass@123', {
   });
 
 
-  module.exports = db
+module.exports = db
