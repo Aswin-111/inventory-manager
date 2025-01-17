@@ -1,48 +1,34 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
 const useStore = create((set) => ({
-//   bears: 0,
-//   increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
-//   removeAllBears: () => set({ bears: 0 }),
-//   updateBears: (newBears) => set({ bears: newBears }),
-     
+  new_product_toggle: false,
 
-     new_product_toggle : false,
-     
-     
-     setProductToggle: (toggle) => set((state) => ({ new_product_toggle: toggle })),
+  setProductToggle: (toggle) =>
+    set((state) => ({ new_product_toggle: toggle })),
 
+  inventory_toggle: false,
 
-     new_category_toggle : false,
-     
-     
-     setCategoryToggle: (toggle) => set((state) => ({ new_category_toggle: toggle })),
+  setInventoryToggle: function (toggle) {
+    return set((state) => ({ inventory_toggle: toggle }));
+  },
 
+  new_category_toggle: false,
 
-     categories_from_db : [],
-     
-     
-     setCategory: (data) => set((state) => ({ categories_from_db : [...data] })),
+  setCategoryToggle: (toggle) =>
+    set((state) => ({ new_category_toggle: toggle })),
 
+  categories_from_db: [],
 
-   
-    
-     categories_from_db_popup : [],
-     
-     
-     setCategoryPopup: (data) => set((state) => ({ categories_from_db_popup : [...data] })),
+  setCategory: (data) => set((state) => ({ categories_from_db: [...data] })),
 
+  categories_from_db_popup: [],
 
+  setCategoryPopup: (data) =>
+    set((state) => ({ categories_from_db_popup: [...data] })),
 
+  stocks_from_db: [],
 
-
-
-     
-     stocks_from_db : [],
-     
-     
-     setStocks: (data) => set((state) => ({ stocks_from_db : [...data] })),
-     
-}))
+  setStocks: (data) => set((state) => ({ stocks_from_db: [...data] })),
+}));
 
 export default useStore;
